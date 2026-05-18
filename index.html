@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Camelid Pre/Post-Immune SRA Datasets for Cancer Nanobody Discovery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/white.css" id="theme">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/monokai.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink:        #1d2433;
+    --ink-soft:   #4a5468;
+    --paper:      #fafaf7;
+    --rule:       #d6d6d0;
+    --accent:     #7a4a17;     /* burnt sienna — camel coat */
+    --accent-2:   #2e5a47;     /* deep green — molecular biology */
+    --warn:       #b54d2c;
+    --good:       #2e5a47;
+    --neutral:    #6b6358;
+    --mono:       'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .reveal {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    color: var(--ink);
+    background: var(--paper);
+  }
+  .reveal .slides { text-align: left; }
+  .reveal section { padding: 0 2.5rem; }
+
+  .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    text-transform: none;
+    margin: 0 0 0.5em 0;
+    line-height: 1.15;
+  }
+  .reveal h1 { font-size: 2.4em; font-weight: 700; }
+  .reveal h2 { font-size: 1.7em; font-weight: 600; }
+  .reveal h3 { font-size: 1.15em; font-weight: 600; color: var(--accent); }
+  .reveal h4 { font-size: 0.95em; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .reveal p, .reveal li { font-size: 0.78em; line-height: 1.55; color: var(--ink); }
+  .reveal small { font-size: 0.62em; color: var(--ink-soft); }
+  .reveal strong { color: var(--ink); font-weight: 600; }
+  .reveal em { color: var(--accent-2); font-style: normal; font-weight: 500; }
+  .reveal code, .reveal .mono { font-family: var(--mono); font-size: 0.92em; }
+  .reveal .accession { font-family: var(--mono); color: var(--accent); font-weight: 500; }
+  .reveal .pmid { font-family: var(--mono); color: var(--ink-soft); }
+
+  .reveal ul, .reveal ol { margin-left: 1.1em; }
+  .reveal li { margin: 0.25em 0; }
+
+  /* Korean / Chinese typography */
+  body.lang-ko, body.lang-ko .reveal { font-family: 'Noto Sans KR', 'Inter', system-ui, sans-serif; }
+  body.lang-zh, body.lang-zh .reveal { font-family: 'Noto Sans SC', 'Inter', system-ui, sans-serif; }
+
+  /* Language layer toggle */
+  .lang-block { display: none; }
+  body.lang-en .lang-block.en { display: block; }
+  body.lang-ko .lang-block.ko { display: block; }
+  body.lang-zh .lang-block.zh { display: block; }
+
+  /* Language switcher */
+  .lang-switch {
+    position: fixed; top: 14px; right: 14px; z-index: 9999;
+    display: inline-flex; gap: 0; background: #fff;
+    border: 1px solid var(--rule); border-radius: 999px;
+    overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .lang-switch button {
+    background: transparent; border: 0; padding: 6px 14px;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    color: var(--ink-soft); transition: all .15s;
+  }
+  .lang-switch button + button { border-left: 1px solid var(--rule); }
+  .lang-switch button:hover { color: var(--ink); background: #f4f3ee; }
+  body.lang-en .lang-switch button[data-lang="en"],
+  body.lang-ko .lang-switch button[data-lang="ko"],
+  body.lang-zh .lang-switch button[data-lang="zh"] {
+    background: var(--ink); color: #fff;
+  }
+
+  /* Title slide */
+  .title-slide { text-align: center; padding-top: 2rem; }
+  .title-slide .eyebrow {
+    font-family: var(--mono); font-size: 0.55em;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5em;
+  }
+  .title-slide h1 { font-size: 2.1em; max-width: 900px; margin: 0 auto 0.6em; }
+  .title-slide .subtitle { font-size: 0.85em; color: var(--ink-soft); max-width: 750px; margin: 0 auto; }
+  .title-slide .meta {
+    margin-top: 3em; font-family: var(--mono);
+    font-size: 0.6em; color: var(--neutral);
+  }
+
+  /* Two-column layout */
+  .grid-2 { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.8em; align-items: start; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2em; }
+
+  /* Cards */
+  .card {
+    background: #fff; border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 0.9em 1.1em; margin: 0.4em 0; border-radius: 2px;
+  }
+  .card.flagship { border-left-color: var(--good); }
+  .card.warn { border-left-color: var(--warn); }
+  .card.neutral { border-left-color: var(--neutral); }
+  .card h4 { margin-top: 0; }
+
+  /* Tables */
+  .reveal table { font-size: 0.62em; border-collapse: collapse; width: 100%; margin: 0.5em 0; }
+  .reveal table th, .reveal table td {
+    border-bottom: 1px solid var(--rule); padding: 7px 9px; text-align: left;
+    vertical-align: top;
+  }
+  .reveal table th {
+    background: #f4f3ee; font-weight: 600; color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+    font-size: 0.92em; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .reveal table tr:hover td { background: #faf9f5; }
+  .badge {
+    display: inline-block; padding: 1px 8px; border-radius: 10px;
+    font-family: var(--mono); font-size: 0.78em; font-weight: 500;
+  }
+  .badge.yes { background: #e3efe7; color: var(--good); }
+  .badge.partial { background: #fff1d6; color: #8a5a00; }
+  .badge.no  { background: #f5e0d8; color: var(--warn); }
+
+  /* Workflow diagram */
+  .workflow {
+    display: flex; align-items: stretch; gap: 0;
+    margin: 1em 0; font-size: 0.65em;
+  }
+  .workflow .step {
+    flex: 1; background: #fff; border: 1px solid var(--rule);
+    padding: 0.8em 0.6em; text-align: center;
+    border-right: 0; position: relative;
+  }
+  .workflow .step:last-child { border-right: 1px solid var(--rule); }
+  .workflow .step .n {
+    font-family: var(--mono); font-size: 1.1em; color: var(--accent);
+    font-weight: 600; display: block; margin-bottom: 0.3em;
+  }
+  .workflow .step .lbl {
+    font-size: 0.92em; line-height: 1.3; color: var(--ink);
+  }
+  .workflow .step.pre { background: #fbf6ee; }
+  .workflow .step.post { background: #eef4ef; }
+
+  /* Footer / slide number */
+  .reveal .footer {
+    position: absolute; bottom: 18px; left: 2.5rem; right: 2.5rem;
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 10px; color: var(--neutral);
+    border-top: 1px solid var(--rule); padding-top: 6px;
+  }
+
+  /* Slide number override (reveal default) */
+  .reveal .slide-number { background: transparent; color: var(--neutral); font-family: var(--mono); font-size: 11px; }
+
+  /* Reduce default padding around slide content for density */
+  .reveal .slides section.present { padding-top: 1.5rem; }
+
+  /* Quote */
+  .quote {
+    font-style: italic; color: var(--ink-soft);
+    border-left: 3px solid var(--rule); padding-left: 1em;
+    font-size: 0.78em; margin: 0.6em 0;
+  }
+
+  /* Footnote */
+  .fn { font-size: 0.55em; color: var(--neutral); margin-top: 1em; font-family: var(--mono); }
+
+  /* Print styles for PDF export */
+  @media print {
+    .lang-switch { display: none; }
+  }
+</style>
+</head>
+<body class="lang-en">
+
+<!-- Language switcher -->
+<div class="lang-switch" role="group" aria-label="Language switcher">
+  <button data-lang="en" type="button">EN</button>
+  <button data-lang="ko" type="button">한국어</button>
+  <button data-lang="zh" type="button">中文</button>
+</div>
+
+<div class="reveal">
+  <div class="slides">
+
+    <!-- ============ SLIDE 1: TITLE ============ -->
+    <section class="title-slide">
+      <div class="lang-block en">
+        <div class="eyebrow">Camelid VHH · Immune Repertoire NGS · Oncology</div>
+        <h1>Pre- vs Post-Immunization Camelid Datasets in SRA</h1>
+        <p class="subtitle">A review of cancer-target nanobody discovery studies that deposited (or should have deposited) paired immune-repertoire NGS data, with an honest accounting of what is publicly available.</p>
+        <div class="meta">May 2026 · review compiled from PubMed, NCBI BioProject, and DDBJ</div>
+      </div>
+      <div class="lang-block ko">
+        <div class="eyebrow">낙타과 VHH · 면역 레퍼토리 NGS · 종양학</div>
+        <h1>SRA에 등록된 낙타과 면역 전·후 데이터셋</h1>
+        <p class="subtitle">암 타겟 나노바디 발굴을 위해 면역 전·후 레퍼토리 NGS 데이터를 공개한(또는 공개했어야 할) 연구들을 정리하고, 실제로 공개된 데이터가 어떤 수준인지 솔직하게 평가합니다.</p>
+        <div class="meta">2026년 5월 · PubMed, NCBI BioProject, DDBJ 기반</div>
+      </div>
+      <div class="lang-block zh">
+        <div class="eyebrow">骆驼科 VHH · 免疫库 NGS · 肿瘤学</div>
+        <h1>SRA 中的骆驼科免疫前后数据集</h1>
+        <p class="subtitle">围绕抗肿瘤纳米抗体的发现，整理公开（或应公开）了免疫前后配对抗体库 NGS 数据的研究，并如实评估当前公共数据的实际可得性。</p>
+        <div class="meta">2026 年 5 月 · 资料来源：PubMed、NCBI BioProject、DDBJ</div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 2: WHY CAMELID VHH ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Why camelid VHHs for oncology?</h2>
+        <div class="grid-2">
+          <div>
+            <h3>Biology</h3>
+            <p>In 1993 Hamers-Casterman discovered that camelids (camels, llamas, alpacas) circulate <strong>heavy-chain–only antibodies</strong> alongside conventional IgG. The variable domain of these antibodies — <strong>VHH</strong>, or "nanobody" — is a single 12–15 kDa polypeptide that folds and binds antigen on its own.</p>
+            <p>VHHs combine four properties that conventional Fabs struggle to deliver together: small size, thermal and chemical stability, access to concave or cryptic epitopes (active sites of kinases, virus fusion intermediates), and straightforward bacterial production at therapeutic scale.</p>
+          </div>
+          <div>
+            <h3>Why oncology cares</h3>
+            <ul>
+              <li><strong>Solid tumor penetration</strong> — VHHs diffuse into dense stroma where IgG cannot reach.</li>
+              <li><strong>Multispecific formats</strong> — easily linked into BiTE-style, CAR-T binders, or ImmunoPET tracers.</li>
+              <li><strong>Catalytic-site targeting</strong> — for kinases (HER2-TK, RON, EGFR) and signaling clefts.</li>
+              <li><strong>Approved precedents</strong> — caplacizumab (2018, vWF), envafolimab (2021, PD-L1, China), ozoralizumab (2022, TNFα, Japan).</li>
+            </ul>
+          </div>
+        </div>
+        <p class="fn">Sources: Hamers-Casterman et al. <em>Nature</em> 1993; Muyldermans <em>Annu Rev Biochem</em> 2013; Jovčevska & Muyldermans <em>BioDrugs</em> 2020.</p>
+      </div>
+      <div class="lang-block ko">
+        <h2>왜 종양학에서 낙타과 VHH인가?</h2>
+        <div class="grid-2">
+          <div>
+            <h3>생물학적 배경</h3>
+            <p>1993년 Hamers-Casterman은 낙타과 동물(낙타, 라마, 알파카)이 일반 IgG와 함께 <strong>중쇄(heavy-chain)만으로 구성된 항체</strong>를 순환시킨다는 사실을 보고했습니다. 이 항체의 가변 영역인 <strong>VHH</strong>(혹은 "나노바디")는 약 12–15 kDa의 단일 폴리펩타이드로, 단독으로 접혀 항원과 결합합니다.</p>
+            <p>VHH는 기존 Fab가 한 번에 갖추기 어려운 네 가지 특성을 동시에 보유합니다: 작은 크기, 열·화학적 안정성, 오목하거나 숨겨진 에피토프(키나아제 활성부위, 바이러스 융합 중간체)에 대한 접근성, 그리고 박테리아 생산이 용이하다는 점입니다.</p>
+          </div>
+          <div>
+            <h3>종양학에서의 가치</h3>
+            <ul>
+              <li><strong>고형암 침투</strong> — IgG가 도달하지 못하는 치밀한 종양 기질에 확산.</li>
+              <li><strong>다중특이성 포맷</strong> — BiTE형, CAR-T 결합자, ImmunoPET 추적자로 쉽게 결합.</li>
+              <li><strong>촉매 부위 표적화</strong> — 키나아제(HER2-TK, RON, EGFR)와 신호전달 구조 결합.</li>
+              <li><strong>승인된 선례</strong> — caplacizumab(2018, vWF), envafolimab(2021, PD-L1, 중국), ozoralizumab(2022, TNFα, 일본).</li>
+            </ul>
+          </div>
+        </div>
+        <p class="fn">출처: Hamers-Casterman 외 <em>Nature</em> 1993; Muyldermans <em>Annu Rev Biochem</em> 2013; Jovčevska & Muyldermans <em>BioDrugs</em> 2020.</p>
+      </div>
+      <div class="lang-block zh">
+        <h2>为什么肿瘤学需要骆驼科 VHH？</h2>
+        <div class="grid-2">
+          <div>
+            <h3>生物学基础</h3>
+            <p>1993 年 Hamers-Casterman 发现，骆驼科动物（骆驼、羊驼、美洲驼）在血液中除了常规 IgG，还存在<strong>只含重链的抗体</strong>。其可变结构域称为 <strong>VHH</strong>（即"纳米抗体"），是约 12–15 kDa 的单条多肽，能独立折叠并结合抗原。</p>
+            <p>VHH 同时具备传统 Fab 难以兼得的四项特性：体积小、热和化学稳定性高、可触达凹陷或隐藏表位（如激酶活性中心、病毒融合中间态），以及易于在细菌中规模化生产。</p>
+          </div>
+          <div>
+            <h3>肿瘤学的需求</h3>
+            <ul>
+              <li><strong>实体瘤穿透</strong> — VHH 能扩散到 IgG 难以触达的致密肿瘤基质。</li>
+              <li><strong>多特异性形式</strong> — 易于串联构建 BiTE、CAR-T 识别域或 ImmunoPET 探针。</li>
+              <li><strong>催化位点靶向</strong> — 适用于激酶（HER2-TK、RON、EGFR）和信号转导结构域。</li>
+              <li><strong>已获批先例</strong> — caplacizumab（2018，vWF）、envafolimab（2021，PD-L1，中国）、ozoralizumab（2022，TNFα，日本）。</li>
+            </ul>
+          </div>
+        </div>
+        <p class="fn">参考：Hamers-Casterman 等 <em>Nature</em> 1993；Muyldermans <em>Annu Rev Biochem</em> 2013；Jovčevska & Muyldermans <em>BioDrugs</em> 2020。</p>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 3: WORKFLOW ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>The pre/post-immunization NGS workflow</h2>
+        <div class="workflow">
+          <div class="step pre"><span class="n">01</span><span class="lbl">Pre-immune bleed<br>(week 0)</span></div>
+          <div class="step pre"><span class="n">02</span><span class="lbl">Immunize<br>(cancer antigen + adjuvant)</span></div>
+          <div class="step post"><span class="n">03</span><span class="lbl">Weekly bleeds<br>(weeks 1–14)</span></div>
+          <div class="step post"><span class="n">04</span><span class="lbl">Isolate PBMCs<br>→ total RNA</span></div>
+          <div class="step post"><span class="n">05</span><span class="lbl">VHH-specific<br>RT-PCR</span></div>
+          <div class="step post"><span class="n">06</span><span class="lbl">Illumina<br>paired-end NGS</span></div>
+          <div class="step post"><span class="n">07</span><span class="lbl">Clonotype<br>clustering</span></div>
+          <div class="step post"><span class="n">08</span><span class="lbl">Track frequency<br>across timepoints</span></div>
+          <div class="step post"><span class="n">09</span><span class="lbl">Synthesize &<br>validate top hits</span></div>
+        </div>
+        <div class="grid-2" style="margin-top: 1em;">
+          <div>
+            <h3>Why paired pre vs post?</h3>
+            <p>The pre-immune sample is a <em>null distribution</em> of clonotype frequencies. Any clone that rises in frequency after immunization, especially one whose CDR3 family expands across consecutive timepoints, is a high-prior candidate. The pre/post differential filters out germline-frequent or constitutively expanded clones that would otherwise dominate naive selection.</p>
+          </div>
+          <div>
+            <h3>Where the field is moving</h3>
+            <p>Towards "<em>in silico panning</em>" — predicting antigen-responsive clones directly from temporal frequency dynamics, with phage display retained only for final validation. PRJDB11899 (next slide) is the cleanest published proof of concept for this approach against a cancer antigen (EGFR).</p>
+          </div>
+        </div>
+      </div>
+      <div class="lang-block ko">
+        <h2>면역 전·후 NGS 워크플로우</h2>
+        <div class="workflow">
+          <div class="step pre"><span class="n">01</span><span class="lbl">면역 전 채혈<br>(0주차)</span></div>
+          <div class="step pre"><span class="n">02</span><span class="lbl">면역 접종<br>(암 항원 + 어드주반트)</span></div>
+          <div class="step post"><span class="n">03</span><span class="lbl">주간 채혈<br>(1–14주)</span></div>
+          <div class="step post"><span class="n">04</span><span class="lbl">PBMC 분리<br>→ 전 RNA</span></div>
+          <div class="step post"><span class="n">05</span><span class="lbl">VHH 특이<br>RT-PCR</span></div>
+          <div class="step post"><span class="n">06</span><span class="lbl">Illumina<br>페어드엔드 NGS</span></div>
+          <div class="step post"><span class="n">07</span><span class="lbl">클로노타입<br>클러스터링</span></div>
+          <div class="step post"><span class="n">08</span><span class="lbl">시점별 빈도<br>추적</span></div>
+          <div class="step post"><span class="n">09</span><span class="lbl">상위 후보<br>합성·검증</span></div>
+        </div>
+        <div class="grid-2" style="margin-top: 1em;">
+          <div>
+            <h3>왜 면역 전과 후를 짝지어야 하나?</h3>
+            <p>면역 전 시료는 클로노타입 빈도의 <em>귀무 분포</em> 역할을 합니다. 면역 후 빈도가 상승한 클론, 특히 CDR3 패밀리가 연속 시점에서 확장되는 클론은 항원 반응 후보로서 우선순위가 높습니다. 이 차분(差分) 분석은 본래부터 빈도가 높은 생식계열 클론을 자연스럽게 걸러내며, 단일 시점 분석으로는 놓치기 쉬운 진짜 신호를 드러냅니다.</p>
+          </div>
+          <div>
+            <h3>연구 트렌드</h3>
+            <p>현장은 점차 "<em>인 실리코 패닝(in silico panning)</em>"으로 이동 중입니다. 즉, 시간별 빈도 동역학에서 직접 항원 반응 클론을 예측하고, 파지 디스플레이는 최종 검증 단계로만 남기는 방식입니다. 다음 슬라이드에서 다루는 PRJDB11899는 이 접근법을 암 항원(EGFR)에 적용한 가장 명확한 사례입니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lang-block zh">
+        <h2>免疫前后 NGS 工作流程</h2>
+        <div class="workflow">
+          <div class="step pre"><span class="n">01</span><span class="lbl">免疫前采血<br>（第 0 周）</span></div>
+          <div class="step pre"><span class="n">02</span><span class="lbl">免疫接种<br>（癌抗原 + 佐剂）</span></div>
+          <div class="step post"><span class="n">03</span><span class="lbl">每周采血<br>（第 1–14 周）</span></div>
+          <div class="step post"><span class="n">04</span><span class="lbl">分离 PBMC<br>→ 总 RNA</span></div>
+          <div class="step post"><span class="n">05</span><span class="lbl">VHH 特异性<br>RT-PCR</span></div>
+          <div class="step post"><span class="n">06</span><span class="lbl">Illumina<br>双端测序</span></div>
+          <div class="step post"><span class="n">07</span><span class="lbl">克隆型<br>聚类</span></div>
+          <div class="step post"><span class="n">08</span><span class="lbl">追踪各时点<br>频率变化</span></div>
+          <div class="step post"><span class="n">09</span><span class="lbl">合成与<br>验证</span></div>
+        </div>
+        <div class="grid-2" style="margin-top: 1em;">
+          <div>
+            <h3>为何必须配对免疫前与免疫后？</h3>
+            <p>免疫前样本提供了克隆型频率的<em>零分布</em>。任何在免疫后频率显著上升、特别是在多个连续时点 CDR3 家族不断扩张的克隆，都是高优先级候选。这种"差分"分析能自动剔除本来就高频的种系克隆，避免单点分析中常见的伪信号。</p>
+          </div>
+          <div>
+            <h3>研究趋势</h3>
+            <p>领域正逐步走向"<em>计算机内淘选（in silico panning）</em>"：直接从时间频率动力学预测抗原响应克隆，仅保留噬菌体展示作为最终验证手段。下页要重点介绍的 PRJDB11899 是该方法应用于癌抗原（EGFR）的最清晰公开案例。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 4: HONEST FIELD-WIDE REALITY ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>An honest look at what is actually deposited</h2>
+        <div class="card warn">
+          <h4>The deposition gap</h4>
+          <p>Searching PubMed and NCBI/DDBJ rigorously, the strict criterion "<em>camelid + cancer antigen + publicly deposited paired pre/post-immune NGS</em>" is satisfied cleanly by <strong>only one study</strong>: Yagi-Utsumi et al. 2024 (PRJDB11899), and even there only the EGFR arm meets the "cancer antigen" requirement.</p>
+        </div>
+        <p>The dominant pattern in cancer VHH papers (HER2, CD47, mesothelin, PD-L1, CD19, CD38) is to construct an immune phage display library and publish the few characterised clones recovered after panning — usually with Sanger sequencing of selected colonies. The parent repertoire, pre-immune baseline, and per-timepoint dynamics are almost never deposited.</p>
+        <p>For SARS-CoV-2 the picture is different: PRJNA638614 (Hanke Ty1), PRJNA814713 (Sanchez multivariate mining), and several alpaca CoV-2 studies <em>do</em> include paired pre/post NGS. The methods translate to oncology — they simply have not been applied at scale yet.</p>
+        <p>This review therefore anchors on PRJDB11899 as the proof of concept, and frames four further cancer-VHH discovery studies as methodological context — clearly labelling each one's data-availability status.</p>
+      </div>
+      <div class="lang-block ko">
+        <h2>실제로 공개된 데이터는 얼마나 되는가</h2>
+        <div class="card warn">
+          <h4>공개 데이터의 공백</h4>
+          <p>PubMed와 NCBI/DDBJ를 면밀히 검색했을 때 "<em>낙타과 + 암 항원 + 공개된 면역 전·후 NGS</em>" 조건을 모두 만족하는 연구는 <strong>단 한 건</strong>입니다 — Yagi-Utsumi 외 2024(PRJDB11899). 이 마저도 두 마리 알파카 중 EGFR 면역 알파카만 "암 항원"에 해당합니다.</p>
+        </div>
+        <p>암 VHH 연구의 일반적 패턴은 면역 파지 디스플레이 라이브러리를 만든 뒤, 패닝으로 회수된 소수 클론만 Sanger 시퀀싱으로 발표하는 것입니다. 모(母) 레퍼토리, 면역 전 베이스라인, 시점별 동역학은 거의 공개되지 않습니다.</p>
+        <p>반면 SARS-CoV-2의 경우 PRJNA638614(Hanke Ty1), PRJNA814713(Sanchez 다변량 마이닝) 등 면역 전·후 NGS가 공개된 사례가 존재합니다. 방법론은 종양학으로 그대로 이식 가능하지만, 아직 대규모로 적용되지 않은 상태입니다.</p>
+        <p>따라서 본 리뷰는 PRJDB11899를 개념 증명 사례로 중심에 두고, 4건의 추가 암 VHH 발굴 연구를 방법론적 맥락으로 정리하되, 각 연구의 데이터 공개 상태를 명시합니다.</p>
+      </div>
+      <div class="lang-block zh">
+        <h2>实际公开的数据有多少：诚实评估</h2>
+        <div class="card warn">
+          <h4>数据公开的缺口</h4>
+          <p>系统检索 PubMed 与 NCBI/DDBJ 后发现，严格符合"<em>骆驼科 + 癌抗原 + 公开的免疫前后配对 NGS</em>"三项条件的研究<strong>仅有一项</strong>：Yagi-Utsumi 等 2024（PRJDB11899）；其中也只有 EGFR 免疫的那只羊驼符合"癌抗原"要求。</p>
+        </div>
+        <p>癌症 VHH 论文的主流做法是：构建免疫噬菌体展示库后，仅公开淘选回收的少数克隆（通常通过 Sanger 测序），而完整母代抗体库、免疫前基线、各时点动态几乎从不公开。</p>
+        <p>相比之下，SARS-CoV-2 领域有 PRJNA638614（Hanke Ty1）、PRJNA814713（Sanchez 多变量挖掘）等公开的免疫前后配对 NGS 数据。这些方法学完全可以迁移到肿瘤学，只是尚未大规模应用。</p>
+        <p>因此本综述以 PRJDB11899 为核心概念验证，并以四项补充性癌症 VHH 研究作为方法学背景，逐一标注其数据公开状态。</p>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 5: FLAGSHIP — Yagi-Utsumi / PRJDB11899 ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Flagship study · <span class="accession">PRJDB11899</span></h2>
+        <div class="card flagship">
+          <h4>Yagi-Utsumi et al., <em>Frontiers in Immunology</em> 2024;15:1335462 · <span class="pmid">PMID 38292485</span></h4>
+          <p style="margin: 0.2em 0;"><em>"Prediction of antigen-responding VHH antibodies by tracking the evolution of antibody along the time course of immunization."</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>Design</h3>
+            <ul>
+              <li>Two alpacas (<em>Vicugna pacos</em>), independent experiments.</li>
+              <li>Arm A: human IgG-Fc antigen — weekly bleeds over ~14 weeks.</li>
+              <li>Arm B: <strong>human EGFR ECD</strong> — three bleeds over 9 weeks (cancer target arm).</li>
+              <li>VHH-specific RT-PCR from PBMC total RNA → Illumina paired-end sequencing.</li>
+              <li>Clonotype clustering by CDR3 identity; per-timepoint frequency tracked.</li>
+              <li>Data: <span class="accession">PRJDB11899</span> at DDBJ (NCBI-mirrored).</li>
+            </ul>
+            <h3>Validation</h3>
+            <p>Top 16 most-abundant clusters per arm were chemically synthesized and tested for antigen binding by ELISA and SPR — with no phage panning step.</p>
+          </div>
+          <div>
+            <h3>Headline results</h3>
+            <ul>
+              <li><strong>IgG-Fc arm:</strong> 13/16 clusters confirmed as antigen binders (81% precision).</li>
+              <li><strong>EGFR arm:</strong> 10/12 generated clusters yielded binders; <strong>5 confirmed by both ELISA and SPR</strong> (~77% precision).</li>
+              <li>Time-course tracking outperformed single-timepoint frequency: clusters that <em>grew across consecutive weeks</em> were the strongest signal.</li>
+            </ul>
+            <h3>Significance</h3>
+            <p>The first published demonstration, against a cancer antigen, that NGS-only "in silico panning" can replace classical phage display selection. Sets the methodological template for future oncology nanobody campaigns.</p>
+          </div>
+        </div>
+        <p class="fn">DOI: 10.3389/fimmu.2023.1335462 · Verify accession: https://ddbj.nig.ac.jp/resource/bioproject/PRJDB11899</p>
+      </div>
+      <div class="lang-block ko">
+        <h2>핵심 연구 · <span class="accession">PRJDB11899</span></h2>
+        <div class="card flagship">
+          <h4>Yagi-Utsumi 외, <em>Frontiers in Immunology</em> 2024;15:1335462 · <span class="pmid">PMID 38292485</span></h4>
+          <p style="margin: 0.2em 0;"><em>"면역 시간 경과를 추적함으로써 항원 반응 VHH 항체를 예측"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>실험 설계</h3>
+            <ul>
+              <li>알파카(<em>Vicugna pacos</em>) 두 마리, 독립 실험.</li>
+              <li>실험 A: 인간 IgG-Fc 면역, 약 14주간 주간 채혈.</li>
+              <li>실험 B: <strong>인간 EGFR 세포외 도메인</strong> 면역, 9주간 3회 채혈 (암 표적).</li>
+              <li>PBMC 총 RNA에서 VHH 특이 RT-PCR → Illumina 페어드엔드 시퀀싱.</li>
+              <li>CDR3 동일성 기반 클로노타입 클러스터링, 시점별 빈도 추적.</li>
+              <li>데이터: DDBJ <span class="accession">PRJDB11899</span> (NCBI 미러).</li>
+            </ul>
+            <h3>검증 방법</h3>
+            <p>각 실험에서 상위 16개 클러스터를 화학 합성하여, 파지 패닝 없이 ELISA와 SPR로 항원 결합을 측정.</p>
+          </div>
+          <div>
+            <h3>주요 결과</h3>
+            <ul>
+              <li><strong>IgG-Fc:</strong> 16개 중 13개 클러스터가 항원 결합 확인 (정밀도 81%).</li>
+              <li><strong>EGFR:</strong> 생성된 12개 클러스터 중 10개에서 결합자 확보, <strong>5개는 ELISA와 SPR 모두에서 확인</strong>(정밀도 약 77%).</li>
+              <li>단일 시점 빈도보다 <em>연속 시점에서 증가하는 클러스터</em>가 더 강력한 신호.</li>
+            </ul>
+            <h3>의의</h3>
+            <p>암 항원에 대해 NGS만으로 ("인 실리코 패닝") 파지 디스플레이를 대체할 수 있음을 처음 공개 입증한 사례. 향후 종양 나노바디 발굴의 방법론적 기준이 되었습니다.</p>
+          </div>
+        </div>
+        <p class="fn">DOI: 10.3389/fimmu.2023.1335462 · 확인 링크: https://ddbj.nig.ac.jp/resource/bioproject/PRJDB11899</p>
+      </div>
+      <div class="lang-block zh">
+        <h2>旗舰研究 · <span class="accession">PRJDB11899</span></h2>
+        <div class="card flagship">
+          <h4>Yagi-Utsumi 等，<em>Frontiers in Immunology</em> 2024;15:1335462 · <span class="pmid">PMID 38292485</span></h4>
+          <p style="margin: 0.2em 0;"><em>"通过追踪免疫过程中抗体的演化来预测抗原响应型 VHH 抗体"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>实验设计</h3>
+            <ul>
+              <li>两只羊驼（<em>Vicugna pacos</em>），独立实验。</li>
+              <li>实验 A：人源 IgG-Fc 抗原，约 14 周内每周采血。</li>
+              <li>实验 B：<strong>人源 EGFR 胞外段</strong>，9 周内 3 次采血（癌靶向）。</li>
+              <li>PBMC 总 RNA → VHH 特异性 RT-PCR → Illumina 双端测序。</li>
+              <li>按 CDR3 同源性聚类，追踪各时点频率。</li>
+              <li>数据：DDBJ <span class="accession">PRJDB11899</span>（NCBI 镜像）。</li>
+            </ul>
+            <h3>验证</h3>
+            <p>从每组取最丰度的前 16 个克隆簇直接化学合成，<em>不经噬菌体淘选</em>，通过 ELISA 与 SPR 检测抗原结合。</p>
+          </div>
+          <div>
+            <h3>关键结果</h3>
+            <ul>
+              <li><strong>IgG-Fc 组：</strong>16 个簇中 13 个证实为结合体（精度 81%）。</li>
+              <li><strong>EGFR 组：</strong>12 个生成簇中 10 个含结合体，<strong>5 个同时通过 ELISA 和 SPR 验证</strong>（精度约 77%）。</li>
+              <li>关键观察：<em>连续多周持续上升</em>的簇比单点高频更可靠。</li>
+            </ul>
+            <h3>意义</h3>
+            <p>首次以公开数据证明：针对癌抗原，仅凭 NGS（"计算机内淘选"）即可替代经典噬菌体展示流程。为后续肿瘤纳米抗体筛选确立了方法学模板。</p>
+          </div>
+        </div>
+        <p class="fn">DOI: 10.3389/fimmu.2023.1335462 · 验证链接：https://ddbj.nig.ac.jp/resource/bioproject/PRJDB11899</p>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 6: Case — RON / Deschacht 2017 ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Case study · RON receptor kinase (Deschacht et al. 2017)</h2>
+        <div class="card neutral">
+          <h4>Deschacht N et al., <em>Front Immunol</em> 2017;8:420 · DOI: 10.3389/fimmu.2017.00420</h4>
+          <p style="margin: 0.2em 0;"><em>"Large diversity of functional nanobodies from a camelid immune library revealed by an alternative analysis of NGS data."</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>Antigen and animal</h3>
+            <ul>
+              <li>RON (Recepteur d'Origine Nantais) — receptor tyrosine kinase, oncogene in gastric, breast, and pancreatic cancers.</li>
+              <li>One camel immunized with RON extracellular domain.</li>
+              <li>Immune phage display library of ~10⁸ clones constructed from post-immune PBMCs.</li>
+            </ul>
+            <h3>Public data status</h3>
+            <p><span class="badge no">NO paired pre/post NGS deposit found</span> — NGS sequences appear to be in journal supplementary files only; we could not identify a separate BioProject. Treat as "post-immune NGS, post-panning only".</p>
+          </div>
+          <div>
+            <h3>What they did differently</h3>
+            <p>Instead of relying on panning-then-sequencing, they sequenced the unselected immune library with Illumina, then clustered VHHs at 95% CDR3 identity. This recovered ~16,000 unique VHH families — orders of magnitude more than classical panning had been pulling out for the same animal.</p>
+            <h3>Why it matters</h3>
+            <p>Demonstrated that panning is severely biased toward the most-abundant clones; the rare-but-functional repertoire is invisible without NGS. A direct argument for the pre/post paradigm even though this study did not implement it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lang-block ko">
+        <h2>사례 연구 · RON 수용체 키나아제 (Deschacht 외 2017)</h2>
+        <div class="card neutral">
+          <h4>Deschacht N 외, <em>Front Immunol</em> 2017;8:420 · DOI: 10.3389/fimmu.2017.00420</h4>
+          <p style="margin: 0.2em 0;"><em>"NGS 데이터의 대안적 분석을 통해 드러난 낙타과 면역 라이브러리의 광범위한 기능적 나노바디 다양성"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>항원과 동물</h3>
+            <ul>
+              <li>RON(Recepteur d'Origine Nantais) — 수용체 티로신 키나아제, 위암·유방암·췌장암 종양 유전자.</li>
+              <li>낙타 한 마리를 RON 세포외 도메인으로 면역.</li>
+              <li>면역 후 PBMC로 약 10⁸ 클론 규모의 파지 디스플레이 라이브러리 구축.</li>
+            </ul>
+            <h3>공개 데이터 상태</h3>
+            <p><span class="badge no">면역 전·후 짝지은 NGS 미공개</span> — NGS 시퀀스는 저널 보충자료에만 존재하며 별도 BioProject를 확인할 수 없었습니다. "면역 후·패닝 후 NGS만" 사례로 분류.</p>
+          </div>
+          <div>
+            <h3>접근법의 차별점</h3>
+            <p>패닝 후 시퀀싱이 아니라, 선별되지 않은 면역 라이브러리를 직접 Illumina로 시퀀싱한 뒤 CDR3 동일성 95%로 클러스터링. 약 16,000개의 고유 VHH 패밀리를 회수했으며, 이는 같은 동물에서 기존 패닝으로 얻던 양보다 몇 자릿수 더 많습니다.</p>
+            <h3>의미</h3>
+            <p>패닝이 가장 많이 발현된 클론에 심각히 편중된다는 사실을 입증. 희소하지만 기능적인 클론은 NGS 없이는 보이지 않으며, 이 연구가 면역 전·후 패러다임을 직접 구현하지는 않았지만 그 필요성을 분명히 보여줍니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lang-block zh">
+        <h2>案例研究 · RON 受体激酶（Deschacht 等 2017）</h2>
+        <div class="card neutral">
+          <h4>Deschacht N 等，<em>Front Immunol</em> 2017;8:420 · DOI: 10.3389/fimmu.2017.00420</h4>
+          <p style="margin: 0.2em 0;"><em>"通过 NGS 数据的另类分析揭示骆驼科免疫库中大量功能性纳米抗体"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>抗原与动物</h3>
+            <ul>
+              <li>RON（Recepteur d'Origine Nantais）—— 受体酪氨酸激酶，胃癌、乳腺癌、胰腺癌中的致癌驱动因子。</li>
+              <li>用 RON 胞外段免疫一只单峰骆驼。</li>
+              <li>从免疫后 PBMC 构建约 10⁸ 规模的噬菌体展示文库。</li>
+            </ul>
+            <h3>公开数据状态</h3>
+            <p><span class="badge no">未发现配对的免疫前后 NGS 公开数据</span> —— 仅有期刊补充材料中的 NGS 序列，未找到独立的 BioProject。归类为"仅免疫后 + 淘选后 NGS"。</p>
+          </div>
+          <div>
+            <h3>方法学创新</h3>
+            <p>不是淘选后再测序，而是对未筛选的免疫库直接 Illumina 测序，再以 CDR3 95% 同源性聚类。回收约 16,000 个独立 VHH 家族，远超经典淘选在同一只动物上能获得的数量。</p>
+            <h3>意义</h3>
+            <p>证明淘选严重偏向最丰度克隆；不依靠 NGS，那些稀有但有功能的克隆是不可见的。虽然此研究未采用免疫前后配对设计，但有力论证了该范式的必要性。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 7: Case — HER2 / Tabasinezhad 2021 ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Case study · HER2 (Tabasinezhad et al. 2021)</h2>
+        <div class="card neutral">
+          <h4>Tabasinezhad M et al., <em>Protein Eng Des Sel</em> 2021 · <span class="pmid">PMID 34908139</span> · DOI: 10.1093/protein/gzab030</h4>
+          <p style="margin: 0.2em 0;"><em>"Generation of a nanobody against HER2 tyrosine kinase using phage display library screening for HER2-positive breast cancer therapy development."</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>Antigen and animal</h3>
+            <ul>
+              <li>Antigen: HER2 intracellular tyrosine kinase domain (HER2-TK).</li>
+              <li>Animal: dromedary camel.</li>
+              <li>Standard immunization regimen with recombinant HER2-TK and adjuvant.</li>
+              <li>Immune phage display library, biopanning, Sanger sequencing of recovered clones.</li>
+            </ul>
+            <h3>Outputs</h3>
+            <p>Three anti-HER2-TK VHH single-domain antibodies (sdAbs) selected after panning, characterized for binding by ELISA. Demonstrated cell-line-level binding to HER2-positive breast cancer cells.</p>
+          </div>
+          <div>
+            <h3>Public data status</h3>
+            <p><span class="badge no">No public NGS deposit</span> — paper reports characterized clones only. The parent immune repertoire was not deposited in SRA/DDBJ/ENA.</p>
+            <h3>Why we include it</h3>
+            <p>This is the <em>canonical pattern</em> for cancer nanobody papers in the past decade: immunize → phage panning → Sanger-sequence the hits → publish. Reading PRJDB11899 against this study makes vivid what is lost when the parent repertoire is not preserved: the rest of the response is unrecoverable, and the data is unreplicable.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lang-block ko">
+        <h2>사례 연구 · HER2 (Tabasinezhad 외 2021)</h2>
+        <div class="card neutral">
+          <h4>Tabasinezhad M 외, <em>Protein Eng Des Sel</em> 2021 · <span class="pmid">PMID 34908139</span> · DOI: 10.1093/protein/gzab030</h4>
+          <p style="margin: 0.2em 0;"><em>"HER2 양성 유방암 치료제 개발을 위한 HER2 티로신 키나아제 표적 나노바디 생성"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>항원과 동물</h3>
+            <ul>
+              <li>항원: HER2 세포 내 티로신 키나아제 도메인(HER2-TK).</li>
+              <li>동물: 단봉낙타.</li>
+              <li>재조합 HER2-TK + 어드주반트로 표준 면역.</li>
+              <li>면역 파지 디스플레이 라이브러리 → 바이오패닝 → 회수 클론 Sanger 시퀀싱.</li>
+            </ul>
+            <h3>결과</h3>
+            <p>패닝 후 항-HER2-TK VHH 단일 도메인 항체(sdAb) 3종 선별. ELISA로 결합 특성 분석, HER2 양성 유방암 세포주 결합 확인.</p>
+          </div>
+          <div>
+            <h3>공개 데이터 상태</h3>
+            <p><span class="badge no">공개 NGS 데이터 없음</span> — 특성화된 클론만 보고. 부모 면역 레퍼토리는 SRA/DDBJ/ENA 어디에도 등록되지 않았습니다.</p>
+            <h3>왜 포함했는가</h3>
+            <p>지난 10년간 암 나노바디 논문의 <em>전형적 패턴</em>입니다: 면역 → 파지 패닝 → 회수 클론 Sanger 시퀀싱 → 발표. PRJDB11899와 나란히 두면 부모 레퍼토리를 보존하지 않을 때 무엇이 사라지는지 분명히 드러납니다. 나머지 반응은 회복 불가능하고 데이터는 재현 불가능합니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lang-block zh">
+        <h2>案例研究 · HER2（Tabasinezhad 等 2021）</h2>
+        <div class="card neutral">
+          <h4>Tabasinezhad M 等，<em>Protein Eng Des Sel</em> 2021 · <span class="pmid">PMID 34908139</span> · DOI: 10.1093/protein/gzab030</h4>
+          <p style="margin: 0.2em 0;"><em>"利用噬菌体展示库筛选生成抗 HER2 酪氨酸激酶的纳米抗体，用于 HER2 阳性乳腺癌治疗开发"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>抗原与动物</h3>
+            <ul>
+              <li>抗原：HER2 胞内酪氨酸激酶结构域（HER2-TK）。</li>
+              <li>动物：单峰骆驼。</li>
+              <li>使用重组 HER2-TK + 佐剂的标准免疫方案。</li>
+              <li>免疫噬菌体展示文库 → 生物淘选 → 回收克隆 Sanger 测序。</li>
+            </ul>
+            <h3>结果</h3>
+            <p>淘选后筛得 3 个抗 HER2-TK VHH 单域抗体（sdAb），通过 ELISA 表征结合性能，并证实可结合 HER2 阳性乳腺癌细胞株。</p>
+          </div>
+          <div>
+            <h3>公开数据状态</h3>
+            <p><span class="badge no">无公开 NGS 数据</span> —— 仅报告少数表征过的克隆。母代免疫抗体库未在 SRA/DDBJ/ENA 注册。</p>
+            <h3>为什么仍纳入</h3>
+            <p>这是过去十年抗肿瘤纳米抗体论文的<em>典型范式</em>：免疫 → 噬菌体淘选 → 回收克隆 Sanger 测序 → 发表。与 PRJDB11899 并置，便能直观地看到——不保存母代抗体库时，免疫响应的其余部分将永远不可复原，数据也无法重复。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 8: Methodological comparator — Sanchez 2022 ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Methodological comparator · <span class="accession">PRJNA814713</span></h2>
+        <div class="card neutral">
+          <h4>Sanchez-Velasco et al., <em>Sci Adv</em> 2022;8:eabm0220 · DOI: 10.1126/sciadv.abm0220</h4>
+          <p style="margin: 0.2em 0;"><em>"Multivariate mining of an alpaca immune repertoire identifies potent cross-neutralizing SARS-CoV-2 nanobodies."</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>Why include it (and why with a caveat)</h3>
+            <p>The antigen is SARS-CoV-2 spike — <strong>not a cancer target</strong>. We include this paper because it executes the cleanest published multivariate pre/post + pre/post-panning analysis, and the entire statistical framework transfers directly to oncology. Reading it tells you what a future cancer-VHH study with PRJDB-style deposit will look like.</p>
+          </div>
+          <div>
+            <h3>Design and data</h3>
+            <ul>
+              <li>One alpaca, full pre-immune baseline + repeated post-immune bleeds.</li>
+              <li>Multiple rounds of phage panning, each round NGS'd separately.</li>
+              <li>BioProject: <span class="accession">PRJNA814713</span> (NCBI SRA).</li>
+              <li>Per-clonotype enrichment ratios computed across (post/pre) and (panned/unpanned) dimensions.</li>
+            </ul>
+          </div>
+        </div>
+        <h3>Lessons portable to oncology</h3>
+        <ul>
+          <li><strong>Ratios outperform absolute counts.</strong> Many top clones are not the most abundant; they are the most <em>enriched</em>.</li>
+          <li><strong>Pre-immune baseline filters germline noise</strong> that single-timepoint analysis blindly mistakes for signal.</li>
+          <li><strong>Multivariate plots</strong> (post/pre × panned/unpanned) cleanly separate true responders from background — directly applicable to HER2, PD-L1, mesothelin campaigns.</li>
+        </ul>
+      </div>
+      <div class="lang-block ko">
+        <h2>방법론적 비교 사례 · <span class="accession">PRJNA814713</span></h2>
+        <div class="card neutral">
+          <h4>Sanchez-Velasco 외, <em>Sci Adv</em> 2022;8:eabm0220 · DOI: 10.1126/sciadv.abm0220</h4>
+          <p style="margin: 0.2em 0;"><em>"알파카 면역 레퍼토리의 다변량 마이닝을 통한 광범위 중화 SARS-CoV-2 나노바디 발굴"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>왜 포함하는가 (그리고 단서)</h3>
+            <p>항원은 SARS-CoV-2 스파이크 — <strong>암 표적이 아님</strong>. 그럼에도 이 논문은 면역 전·후, 그리고 패닝 전·후의 다변량 분석을 가장 깨끗하게 공개한 사례입니다. 통계 프레임워크 전체가 종양학으로 그대로 옮겨갈 수 있습니다. 미래에 PRJDB 수준의 데이터 공개를 갖춘 암 VHH 연구가 어떤 모습일지 예고하는 셈입니다.</p>
+          </div>
+          <div>
+            <h3>설계와 데이터</h3>
+            <ul>
+              <li>알파카 한 마리: 면역 전 베이스라인 + 반복 면역 후 채혈.</li>
+              <li>여러 라운드의 파지 패닝, 각 라운드를 별도로 NGS.</li>
+              <li>BioProject: <span class="accession">PRJNA814713</span> (NCBI SRA).</li>
+              <li>클로노타입별 농축비를 (면역 후/전), (패닝/비패닝) 두 차원으로 계산.</li>
+            </ul>
+          </div>
+        </div>
+        <h3>종양학에 그대로 적용 가능한 교훈</h3>
+        <ul>
+          <li><strong>비율이 절대 빈도보다 우수</strong>. 상위 클론 다수는 가장 풍부하지 않고 가장 <em>농축</em>된 클론.</li>
+          <li><strong>면역 전 베이스라인이 생식계열 노이즈를 걸러냄</strong> — 단일 시점 분석은 이를 신호로 오인.</li>
+          <li><strong>다변량 플롯</strong>(면역 후/전 × 패닝/비패닝)은 진짜 반응체와 배경을 명확히 분리 — HER2, PD-L1, mesothelin 캠페인에 즉시 적용 가능.</li>
+        </ul>
+      </div>
+      <div class="lang-block zh">
+        <h2>方法学对照 · <span class="accession">PRJNA814713</span></h2>
+        <div class="card neutral">
+          <h4>Sanchez-Velasco 等，<em>Sci Adv</em> 2022;8:eabm0220 · DOI: 10.1126/sciadv.abm0220</h4>
+          <p style="margin: 0.2em 0;"><em>"对羊驼免疫库的多变量挖掘鉴定出强效广谱中和 SARS-CoV-2 纳米抗体"</em></p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h3>为什么纳入（并附保留）</h3>
+            <p>抗原是 SARS-CoV-2 刺突蛋白，<strong>不是癌靶</strong>。但本研究公开了目前最干净的"免疫前后 + 淘选前后"多变量分析，统计框架可直接迁移到肿瘤学。读完它就能预见：未来一项公开 PRJDB 级数据的癌症 VHH 研究将是什么样子。</p>
+          </div>
+          <div>
+            <h3>实验设计与数据</h3>
+            <ul>
+              <li>一只羊驼，完整免疫前基线 + 多次免疫后采血。</li>
+              <li>多轮噬菌体淘选，每轮独立测序。</li>
+              <li>BioProject：<span class="accession">PRJNA814713</span>（NCBI SRA）。</li>
+              <li>计算克隆型在（免疫后/免疫前）和（淘选/未淘选）两个维度上的富集比。</li>
+            </ul>
+          </div>
+        </div>
+        <h3>可直接应用于肿瘤学的经验</h3>
+        <ul>
+          <li><strong>比值优于绝对频率</strong>。许多优质克隆并非最丰度，而是最具<em>富集度</em>。</li>
+          <li><strong>免疫前基线可滤除种系噪声</strong> —— 单点分析会误判这些噪声为信号。</li>
+          <li><strong>多变量散点图</strong>（免疫后/前 × 淘选/未淘选）可干净地分离真实响应克隆 —— 立即可用于 HER2、PD-L1、间皮素等抗肿瘤项目。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 9: COMPARATIVE TABLE ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Comparative summary</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Study</th>
+              <th>Antigen</th>
+              <th>Host</th>
+              <th>Pre-immune NGS public?</th>
+              <th>Post-immune NGS public?</th>
+              <th>BioProject</th>
+              <th>Validated clones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Yagi-Utsumi 2024<br><small>PMID 38292485</small></td>
+              <td><strong>EGFR</strong> (arm B); IgG-Fc (arm A)</td>
+              <td>Alpaca</td>
+              <td><span class="badge yes">YES</span></td>
+              <td><span class="badge yes">YES, weekly</span></td>
+              <td><span class="accession">PRJDB11899</span></td>
+              <td>EGFR: 5 (ELISA + SPR);<br>IgG-Fc: 13</td>
+            </tr>
+            <tr>
+              <td>Deschacht 2017<br><small>RON paper</small></td>
+              <td>RON (RTK)</td>
+              <td>Dromedary camel</td>
+              <td><span class="badge no">NO</span></td>
+              <td><span class="badge partial">SUPPL. ONLY</span></td>
+              <td>—</td>
+              <td>~16,000 family-level VHHs</td>
+            </tr>
+            <tr>
+              <td>Tabasinezhad 2021<br><small>PMID 34908139</small></td>
+              <td>HER2-TK</td>
+              <td>Dromedary camel</td>
+              <td><span class="badge no">NO</span></td>
+              <td><span class="badge no">NO</span></td>
+              <td>—</td>
+              <td>3 anti-HER2-TK sdAbs</td>
+            </tr>
+            <tr>
+              <td>Sanchez 2022<br><small>methodological</small></td>
+              <td>SARS-CoV-2 (NOT cancer)</td>
+              <td>Alpaca</td>
+              <td><span class="badge yes">YES</span></td>
+              <td><span class="badge yes">YES + panning rounds</span></td>
+              <td><span class="accession">PRJNA814713</span></td>
+              <td>Multiple cross-neutralizers</td>
+            </tr>
+            <tr>
+              <td>NKG2A melanoma 2025<br><small>PMC12076520</small></td>
+              <td>NKG2A (checkpoint)</td>
+              <td>Alpaca</td>
+              <td><span class="badge no">NO</span></td>
+              <td><span class="badge no">NO</span></td>
+              <td>—<br><small>"data on request"</small></td>
+              <td>1 lead VHH</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="fn">Five rows; only Yagi-Utsumi 2024 satisfies the user's original criterion (cancer + paired pre/post NGS publicly deposited). Sanchez 2022 satisfies the deposit criterion but with a non-cancer antigen. The remaining three are methodological context.</p>
+      </div>
+      <div class="lang-block ko">
+        <h2>비교 요약</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>연구</th>
+              <th>항원</th>
+              <th>숙주</th>
+              <th>면역 전 NGS 공개</th>
+              <th>면역 후 NGS 공개</th>
+              <th>BioProject</th>
+              <th>검증된 클론</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Yagi-Utsumi 2024<br><small>PMID 38292485</small></td>
+              <td><strong>EGFR</strong>(실험 B); IgG-Fc(실험 A)</td>
+              <td>알파카</td>
+              <td><span class="badge yes">예</span></td>
+              <td><span class="badge yes">예, 주간</span></td>
+              <td><span class="accession">PRJDB11899</span></td>
+              <td>EGFR: 5(ELISA+SPR);<br>IgG-Fc: 13</td>
+            </tr>
+            <tr>
+              <td>Deschacht 2017<br><small>RON</small></td>
+              <td>RON (RTK)</td>
+              <td>단봉낙타</td>
+              <td><span class="badge no">아니오</span></td>
+              <td><span class="badge partial">보충자료만</span></td>
+              <td>—</td>
+              <td>패밀리 수준 약 16,000 VHH</td>
+            </tr>
+            <tr>
+              <td>Tabasinezhad 2021<br><small>PMID 34908139</small></td>
+              <td>HER2-TK</td>
+              <td>단봉낙타</td>
+              <td><span class="badge no">아니오</span></td>
+              <td><span class="badge no">아니오</span></td>
+              <td>—</td>
+              <td>항-HER2-TK sdAb 3종</td>
+            </tr>
+            <tr>
+              <td>Sanchez 2022<br><small>방법론</small></td>
+              <td>SARS-CoV-2(비암)</td>
+              <td>알파카</td>
+              <td><span class="badge yes">예</span></td>
+              <td><span class="badge yes">예 + 패닝 라운드</span></td>
+              <td><span class="accession">PRJNA814713</span></td>
+              <td>다수의 광범위 중화 클론</td>
+            </tr>
+            <tr>
+              <td>NKG2A 흑색종 2025<br><small>PMC12076520</small></td>
+              <td>NKG2A(체크포인트)</td>
+              <td>알파카</td>
+              <td><span class="badge no">아니오</span></td>
+              <td><span class="badge no">아니오</span></td>
+              <td>—<br><small>"요청 시 제공"</small></td>
+              <td>대표 VHH 1종</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="fn">총 5건. 원래 기준(암 + 면역 전·후 NGS 공개)을 모두 만족하는 연구는 Yagi-Utsumi 2024뿐. Sanchez 2022는 데이터 공개 기준은 충족하나 항원이 암이 아님. 나머지 3건은 방법론적 맥락 제공.</p>
+      </div>
+      <div class="lang-block zh">
+        <h2>对照汇总</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>研究</th>
+              <th>抗原</th>
+              <th>宿主</th>
+              <th>免疫前 NGS 公开</th>
+              <th>免疫后 NGS 公开</th>
+              <th>BioProject</th>
+              <th>验证克隆</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Yagi-Utsumi 2024<br><small>PMID 38292485</small></td>
+              <td><strong>EGFR</strong>（实验 B）；IgG-Fc（实验 A）</td>
+              <td>羊驼</td>
+              <td><span class="badge yes">是</span></td>
+              <td><span class="badge yes">是，每周</span></td>
+              <td><span class="accession">PRJDB11899</span></td>
+              <td>EGFR：5（ELISA+SPR）；<br>IgG-Fc：13</td>
+            </tr>
+            <tr>
+              <td>Deschacht 2017<br><small>RON</small></td>
+              <td>RON（RTK）</td>
+              <td>单峰骆驼</td>
+              <td><span class="badge no">否</span></td>
+              <td><span class="badge partial">仅补充材料</span></td>
+              <td>—</td>
+              <td>家族水平约 16,000 个 VHH</td>
+            </tr>
+            <tr>
+              <td>Tabasinezhad 2021<br><small>PMID 34908139</small></td>
+              <td>HER2-TK</td>
+              <td>单峰骆驼</td>
+              <td><span class="badge no">否</span></td>
+              <td><span class="badge no">否</span></td>
+              <td>—</td>
+              <td>3 个抗 HER2-TK sdAb</td>
+            </tr>
+            <tr>
+              <td>Sanchez 2022<br><small>方法学</small></td>
+              <td>SARS-CoV-2（非肿瘤）</td>
+              <td>羊驼</td>
+              <td><span class="badge yes">是</span></td>
+              <td><span class="badge yes">是 + 各轮淘选</span></td>
+              <td><span class="accession">PRJNA814713</span></td>
+              <td>多个广谱中和克隆</td>
+            </tr>
+            <tr>
+              <td>NKG2A 黑色素瘤 2025<br><small>PMC12076520</small></td>
+              <td>NKG2A（免疫检查点）</td>
+              <td>羊驼</td>
+              <td><span class="badge no">否</span></td>
+              <td><span class="badge no">否</span></td>
+              <td>—<br><small>"按要求提供"</small></td>
+              <td>1 个先导 VHH</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="fn">共 5 项研究。完全满足原始标准（癌靶 + 公开的免疫前后 NGS）的仅 Yagi-Utsumi 2024。Sanchez 2022 满足数据公开标准但抗原非癌靶。其余三项作为方法学背景。</p>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 10: CLINICAL TRANSLATION ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Clinical translation context</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h4>Caplacizumab</h4>
+            <p><strong>Target:</strong> von Willebrand factor</p>
+            <p><strong>Status:</strong> first FDA/EMA approved nanobody (2018–2019).</p>
+            <p><strong>Indication:</strong> acquired thrombotic thrombocytopenic purpura.</p>
+            <p>Established the regulatory path for VHH-based therapeutics.</p>
+          </div>
+          <div class="card flagship">
+            <h4>Envafolimab (KN035)</h4>
+            <p><strong>Target:</strong> PD-L1</p>
+            <p><strong>Status:</strong> approved in China 2021 — <em>first approved nanobody for oncology</em>.</p>
+            <p><strong>Indication:</strong> MSI-H/dMMR solid tumors.</p>
+            <p>Subcutaneous PD-L1 blocker; demonstrated the cancer-VHH commercial case.</p>
+          </div>
+          <div class="card">
+            <h4>Ozoralizumab</h4>
+            <p><strong>Target:</strong> TNF-α (trivalent humanized VHH)</p>
+            <p><strong>Status:</strong> approved in Japan 2022.</p>
+            <p><strong>Indication:</strong> rheumatoid arthritis.</p>
+            <p>Validated multivalent VHH formats for inflammatory disease.</p>
+          </div>
+        </div>
+        <h3>Active oncology pipeline (camelid-derived VHHs)</h3>
+        <p>HER2 (CAR-T cell binding domains, ImmunoPET tracers — 2Rs15d, 2Rb17c family); CD38 (multiple myeloma); mesothelin (pancreatic, ovarian); GPC3 (hepatocellular carcinoma); CEACAM5; CTLA-4; LAG-3; TIGIT. The bottleneck has shifted from <em>finding</em> binders to <em>characterizing and engineering</em> them — which is exactly the bottleneck pre/post-immune NGS unlocks.</p>
+      </div>
+      <div class="lang-block ko">
+        <h2>임상 응용 현황</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h4>Caplacizumab</h4>
+            <p><strong>표적:</strong> von Willebrand factor</p>
+            <p><strong>상태:</strong> 최초 FDA/EMA 승인 나노바디(2018–2019).</p>
+            <p><strong>적응증:</strong> 후천성 혈전성 혈소판감소성 자반증(aTTP).</p>
+            <p>VHH 기반 치료제의 규제 경로를 확립.</p>
+          </div>
+          <div class="card flagship">
+            <h4>Envafolimab (KN035)</h4>
+            <p><strong>표적:</strong> PD-L1</p>
+            <p><strong>상태:</strong> 2021년 중국 승인 — <em>최초의 종양 적응 나노바디</em>.</p>
+            <p><strong>적응증:</strong> MSI-H/dMMR 고형암.</p>
+            <p>피하 주사 PD-L1 차단제. 암 VHH의 상업적 가능성을 입증.</p>
+          </div>
+          <div class="card">
+            <h4>Ozoralizumab</h4>
+            <p><strong>표적:</strong> TNF-α (3가 인간화 VHH)</p>
+            <p><strong>상태:</strong> 2022년 일본 승인.</p>
+            <p><strong>적응증:</strong> 류마티스 관절염.</p>
+            <p>다가(多價) VHH 포맷의 염증성 질환 적용 가능성 입증.</p>
+          </div>
+        </div>
+        <h3>활성 종양 파이프라인 (낙타과 유래 VHH)</h3>
+        <p>HER2(CAR-T 결합 도메인, ImmunoPET 추적자 — 2Rs15d, 2Rb17c 패밀리); CD38(다발성골수종); mesothelin(췌장암, 난소암); GPC3(간세포암); CEACAM5; CTLA-4; LAG-3; TIGIT. 병목은 결합자를 <em>찾는</em> 것에서 <em>특성화·엔지니어링</em>으로 이동했고, 바로 이 단계를 면역 전·후 NGS가 가속화합니다.</p>
+      </div>
+      <div class="lang-block zh">
+        <h2>临床转化背景</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h4>Caplacizumab</h4>
+            <p><strong>靶点：</strong>von Willebrand 因子</p>
+            <p><strong>状态：</strong>首个 FDA/EMA 获批的纳米抗体（2018–2019）。</p>
+            <p><strong>适应证：</strong>获得性血栓性血小板减少性紫癜（aTTP）。</p>
+            <p>为 VHH 类治疗产品确立了监管路径。</p>
+          </div>
+          <div class="card flagship">
+            <h4>Envafolimab（KN035）</h4>
+            <p><strong>靶点：</strong>PD-L1</p>
+            <p><strong>状态：</strong>2021 年中国获批 —— <em>首个获批用于肿瘤的纳米抗体</em>。</p>
+            <p><strong>适应证：</strong>MSI-H/dMMR 实体瘤。</p>
+            <p>皮下注射型 PD-L1 阻断剂，验证了抗肿瘤 VHH 的商业可行性。</p>
+          </div>
+          <div class="card">
+            <h4>Ozoralizumab</h4>
+            <p><strong>靶点：</strong>TNF-α（三价人源化 VHH）</p>
+            <p><strong>状态：</strong>2022 年日本获批。</p>
+            <p><strong>适应证：</strong>类风湿性关节炎。</p>
+            <p>验证了多价 VHH 形式在炎症性疾病中的可行性。</p>
+          </div>
+        </div>
+        <h3>抗肿瘤活跃管线（骆驼科来源 VHH）</h3>
+        <p>HER2（CAR-T 识别结构域、ImmunoPET 探针 —— 2Rs15d、2Rb17c 家族）；CD38（多发性骨髓瘤）；间皮素（胰腺癌、卵巢癌）；GPC3（肝细胞癌）；CEACAM5；CTLA-4；LAG-3；TIGIT。瓶颈已从<em>找到</em>结合体转向<em>表征与工程化</em>，而这正是免疫前后 NGS 能够加速的环节。</p>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 11: TAKEAWAYS ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>Key takeaways</h2>
+        <ol>
+          <li><strong>Camelid VHHs are uniquely suited to oncology</strong> — small, stable, and able to reach kinase active sites and solid-tumor stroma where IgG cannot.</li>
+          <li><strong>The classical workflow (immunize → phage panning → Sanger) loses &gt;99% of the repertoire.</strong> Most cancer-VHH papers in the past decade preserve only the few hits, making the underlying biology unrecoverable.</li>
+          <li><strong>Paired pre/post-immune NGS reverses this loss.</strong> Tracking clonotype expansion across consecutive weeks identifies antigen-responsive clusters without any phage selection — "in silico panning".</li>
+          <li><strong>PRJDB11899 is the field's clearest cancer-target proof of concept.</strong> EGFR arm: 10/12 predicted clusters yielded binders, 5 confirmed by both ELISA and SPR. The method is now generalizable to HER2, PD-L1, mesothelin and beyond.</li>
+          <li><strong>The deposition gap is a policy problem, not a technical one.</strong> Routine SRA/DDBJ deposit of pre/post immune repertoires would dramatically accelerate cancer-VHH discovery and enable meta-analysis across antigens.</li>
+        </ol>
+      </div>
+      <div class="lang-block ko">
+        <h2>핵심 요점</h2>
+        <ol>
+          <li><strong>낙타과 VHH는 종양학에 독보적으로 적합</strong> — 작고 안정적이며, IgG가 도달 못하는 키나아제 활성부위와 고형암 기질까지 침투.</li>
+          <li><strong>고전 워크플로우(면역 → 파지 패닝 → Sanger)는 레퍼토리의 99% 이상을 잃음.</strong> 지난 10년간 대부분의 암 VHH 논문은 소수 결합자만 보존하고 그 기저의 생물학을 재현 불가능하게 만들었습니다.</li>
+          <li><strong>면역 전·후 짝 NGS가 이 손실을 되돌립니다.</strong> 연속 주차에 걸친 클로노타입 확장을 추적함으로써, 파지 선별 없이 항원 반응 클러스터를 식별 — "인 실리코 패닝".</li>
+          <li><strong>PRJDB11899는 분야 최초의 명확한 암 표적 개념 증명.</strong> EGFR 실험: 12개 예측 클러스터 중 10개에서 결합자, 5개는 ELISA와 SPR 모두 확인. 이 방법은 이제 HER2, PD-L1, mesothelin 등으로 일반화 가능.</li>
+          <li><strong>데이터 공개 공백은 기술이 아닌 정책 문제.</strong> 면역 전·후 레퍼토리를 SRA/DDBJ에 일상적으로 등록하기만 하면, 암 VHH 발굴은 극적으로 가속화되고 항원 간 메타분석이 가능해집니다.</li>
+        </ol>
+      </div>
+      <div class="lang-block zh">
+        <h2>核心要点</h2>
+        <ol>
+          <li><strong>骆驼科 VHH 在肿瘤学中具有独特优势</strong>——体积小、稳定，能进入 IgG 无法到达的激酶活性中心与实体瘤基质。</li>
+          <li><strong>经典流程（免疫 → 噬菌体淘选 → Sanger）丢失了 99% 以上的抗体库。</strong>过去十年大多数抗肿瘤 VHH 论文只保留少数结合体，使其背后的免疫生物学无法复原。</li>
+          <li><strong>免疫前后配对 NGS 可挽回这一损失。</strong>追踪克隆型在多周内的扩张，无需噬菌体淘选即可识别抗原响应簇 —— 即"计算机内淘选"。</li>
+          <li><strong>PRJDB11899 是领域内最清晰的癌靶概念验证。</strong>EGFR 组：12 个预测簇中 10 个出现结合体，5 个通过 ELISA 与 SPR 双重确认。该方法现已可推广至 HER2、PD-L1、间皮素等其他癌靶。</li>
+          <li><strong>数据公开缺口是政策问题，而非技术问题。</strong>只要将免疫前后抗体库常规提交至 SRA/DDBJ，抗肿瘤 VHH 的发现速度将显著加快，并实现跨抗原的元分析。</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 12: REFERENCES ============ -->
+    <section>
+      <div class="lang-block en">
+        <h2>References &amp; verification links</h2>
+        <ol style="font-size: 0.65em;">
+          <li>Hamers-Casterman C, et al. Naturally occurring antibodies devoid of light chains. <em>Nature</em>. 1993;363:446–8. PMID 8502296.</li>
+          <li>Muyldermans S. Nanobodies: natural single-domain antibodies. <em>Annu Rev Biochem</em>. 2013;82:775–97.</li>
+          <li><strong>Yagi-Utsumi M, et al.</strong> Prediction of antigen-responding VHH antibodies by tracking the evolution of antibody along the time course of immunization. <em>Front Immunol</em>. 2024;15:1335462. PMID 38292485. Data: <span class="accession">PRJDB11899</span>.</li>
+          <li>Deschacht N, et al. Large diversity of functional nanobodies from a camelid immune library revealed by an alternative analysis of NGS data. <em>Front Immunol</em>. 2017;8:420.</li>
+          <li>Tabasinezhad M, et al. Generation of a nanobody against HER2 tyrosine kinase using phage display library screening. <em>Protein Eng Des Sel</em>. 2021. PMID 34908139.</li>
+          <li><strong>Sanchez-Velasco L, et al.</strong> Multivariate mining of an alpaca immune repertoire identifies potent cross-neutralizing SARS-CoV-2 nanobodies. <em>Sci Adv</em>. 2022;8:eabm0220. Data: <span class="accession">PRJNA814713</span>.</li>
+          <li>Hanke L, et al. An alpaca nanobody neutralizes SARS-CoV-2 by blocking receptor interaction. <em>Nat Commun</em>. 2020;11:4420. Data: <span class="accession">PRJNA638614</span>.</li>
+          <li>Jovčevska I, Muyldermans S. The therapeutic potential of nanobodies. <em>BioDrugs</em>. 2020;34:11–26.</li>
+          <li>Gao X, et al. A novel NKG2A alpaca nanobody targeting immune checkpoint blockade for malignant melanoma. <em>Front Vet Sci</em>. 2025. PMC12076520.</li>
+        </ol>
+        <h3 style="margin-top: 0.8em;">Direct verification URLs</h3>
+        <ul style="font-size: 0.65em;">
+          <li>DDBJ BioProject PRJDB11899 — https://ddbj.nig.ac.jp/resource/bioproject/PRJDB11899</li>
+          <li>NCBI mirror — https://www.ncbi.nlm.nih.gov/bioproject/PRJDB11899</li>
+          <li>NCBI BioProject PRJNA814713 — https://www.ncbi.nlm.nih.gov/bioproject/PRJNA814713</li>
+          <li>NCBI BioProject PRJNA638614 — https://www.ncbi.nlm.nih.gov/bioproject/PRJNA638614</li>
+        </ul>
+        <p class="fn">Compiled May 2026. All accession numbers cross-referenced against published data-availability statements; please confirm sample counts directly on NCBI/DDBJ before citing in any submission.</p>
+      </div>
+      <div class="lang-block ko">
+        <h2>참고문헌 및 확인 링크</h2>
+        <ol style="font-size: 0.65em;">
+          <li>Hamers-Casterman C 외. Naturally occurring antibodies devoid of light chains. <em>Nature</em>. 1993;363:446–8. PMID 8502296.</li>
+          <li>Muyldermans S. Nanobodies: natural single-domain antibodies. <em>Annu Rev Biochem</em>. 2013;82:775–97.</li>
+          <li><strong>Yagi-Utsumi M 외.</strong> Prediction of antigen-responding VHH antibodies by tracking the evolution of antibody along the time course of immunization. <em>Front Immunol</em>. 2024;15:1335462. PMID 38292485. 데이터: <span class="accession">PRJDB11899</span>.</li>
+          <li>Deschacht N 외. Large diversity of functional nanobodies from a camelid immune library revealed by an alternative analysis of NGS data. <em>Front Immunol</em>. 2017;8:420.</li>
+          <li>Tabasinezhad M 외. Generation of a nanobody against HER2 tyrosine kinase using phage display library screening. <em>Protein Eng Des Sel</em>. 2021. PMID 34908139.</li>
+          <li><strong>Sanchez-Velasco L 외.</strong> Multivariate mining of an alpaca immune repertoire identifies potent cross-neutralizing SARS-CoV-2 nanobodies. <em>Sci Adv</em>. 2022;8:eabm0220. 데이터: <span class="accession">PRJNA814713</span>.</li>
+          <li>Hanke L 외. An alpaca nanobody neutralizes SARS-CoV-2 by blocking receptor interaction. <em>Nat Commun</em>. 2020;11:4420. 데이터: <span class="accession">PRJNA638614</span>.</li>
+          <li>Jovčevska I, Muyldermans S. The therapeutic potential of nanobodies. <em>BioDrugs</em>. 2020;34:11–26.</li>
+          <li>Gao X 외. A novel NKG2A alpaca nanobody targeting immune checkpoint blockade for malignant melanoma. <em>Front Vet Sci</em>. 2025. PMC12076520.</li>
+        </ol>
+        <h3 style="margin-top: 0.8em;">직접 확인 URL</h3>
+        <ul style="font-size: 0.65em;">
+          <li>DDBJ BioProject PRJDB11899 — https://ddbj.nig.ac.jp/resource/bioproject/PRJDB11899</li>
+          <li>NCBI 미러 — https://www.ncbi.nlm.nih.gov/bioproject/PRJDB11899</li>
+          <li>NCBI BioProject PRJNA814713 — https://www.ncbi.nlm.nih.gov/bioproject/PRJNA814713</li>
+          <li>NCBI BioProject PRJNA638614 — https://www.ncbi.nlm.nih.gov/bioproject/PRJNA638614</li>
+        </ul>
+        <p class="fn">2026년 5월 작성. 모든 accession은 논문 데이터 가용성 명세를 통해 교차 확인됨. 인용·제출 전에는 NCBI/DDBJ에서 샘플 수를 직접 확인하시기 바랍니다.</p>
+      </div>
+      <div class="lang-block zh">
+        <h2>参考文献与核验链接</h2>
+        <ol style="font-size: 0.65em;">
+          <li>Hamers-Casterman C 等. Naturally occurring antibodies devoid of light chains. <em>Nature</em>. 1993;363:446–8. PMID 8502296.</li>
+          <li>Muyldermans S. Nanobodies: natural single-domain antibodies. <em>Annu Rev Biochem</em>. 2013;82:775–97.</li>
+          <li><strong>Yagi-Utsumi M 等.</strong> Prediction of antigen-responding VHH antibodies by tracking the evolution of antibody along the time course of immunization. <em>Front Immunol</em>. 2024;15:1335462. PMID 38292485. 数据：<span class="accession">PRJDB11899</span>。</li>
+          <li>Deschacht N 等. Large diversity of functional nanobodies from a camelid immune library revealed by an alternative analysis of NGS data. <em>Front Immunol</em>. 2017;8:420.</li>
+          <li>Tabasinezhad M 等. Generation of a nanobody against HER2 tyrosine kinase using phage display library screening. <em>Protein Eng Des Sel</em>. 2021. PMID 34908139.</li>
+          <li><strong>Sanchez-Velasco L 等.</strong> Multivariate mining of an alpaca immune repertoire identifies potent cross-neutralizing SARS-CoV-2 nanobodies. <em>Sci Adv</em>. 2022;8:eabm0220. 数据：<span class="accession">PRJNA814713</span>。</li>
+          <li>Hanke L 等. An alpaca nanobody neutralizes SARS-CoV-2 by blocking receptor interaction. <em>Nat Commun</em>. 2020;11:4420. 数据：<span class="accession">PRJNA638614</span>。</li>
+          <li>Jovčevska I, Muyldermans S. The therapeutic potential of nanobodies. <em>BioDrugs</em>. 2020;34:11–26.</li>
+          <li>Gao X 等. A novel NKG2A alpaca nanobody targeting immune checkpoint blockade for malignant melanoma. <em>Front Vet Sci</em>. 2025. PMC12076520.</li>
+        </ol>
+        <h3 style="margin-top: 0.8em;">直接核验链接</h3>
+        <ul style="font-size: 0.65em;">
+          <li>DDBJ BioProject PRJDB11899 — https://ddbj.nig.ac.jp/resource/bioproject/PRJDB11899</li>
+          <li>NCBI 镜像 — https://www.ncbi.nlm.nih.gov/bioproject/PRJDB11899</li>
+          <li>NCBI BioProject PRJNA814713 — https://www.ncbi.nlm.nih.gov/bioproject/PRJNA814713</li>
+          <li>NCBI BioProject PRJNA638614 — https://www.ncbi.nlm.nih.gov/bioproject/PRJNA638614</li>
+        </ul>
+        <p class="fn">2026 年 5 月编制。所有 accession 编号均经文献中"数据可得性"声明交叉核对，正式引用前请在 NCBI/DDBJ 上直接确认样本数。</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>
+  // Initialize Reveal.js
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    controls: true,
+    progress: true,
+    center: false,
+    margin: 0.05,
+    width: 1280,
+    height: 800,
+    minScale: 0.4,
+    maxScale: 1.4
+  });
+
+  // Language switcher logic
+  (function () {
+    var supported = ['en', 'ko', 'zh'];
+    var body = document.body;
+
+    function setLang(lang) {
+      if (supported.indexOf(lang) === -1) lang = 'en';
+      supported.forEach(function (l) {
+        body.classList.toggle('lang-' + l, l === lang);
+      });
+      // Update document lang attribute for accessibility
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+      try { localStorage.setItem('deck-lang', lang); } catch (e) {}
+      // Reveal.js layout may need refresh after language switch (font metrics change)
+      if (window.Reveal && Reveal.layout) Reveal.layout();
+    }
+
+    // Restore language from previous session
+    try {
+      var saved = localStorage.getItem('deck-lang');
+      if (saved && supported.indexOf(saved) !== -1) setLang(saved);
+    } catch (e) {}
+
+    // Wire up buttons
+    document.querySelectorAll('.lang-switch button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setLang(btn.getAttribute('data-lang'));
+      });
+    });
+
+    // Keyboard shortcut: Shift+L cycles languages
+    document.addEventListener('keydown', function (e) {
+      if (e.shiftKey && (e.key === 'L' || e.key === 'l')) {
+        var current = supported.find(function (l) { return body.classList.contains('lang-' + l); }) || 'en';
+        var next = supported[(supported.indexOf(current) + 1) % supported.length];
+        setLang(next);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
